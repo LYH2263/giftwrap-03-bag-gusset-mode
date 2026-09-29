@@ -17,13 +17,21 @@ onMounted(async () => {
 <template>
   <div class="page">
     <h1>用纸档</h1>
-    <p class="lede">算纸页「写入用纸档」后的落库结果，按次保留盒名与面积。</p>
+    <p class="lede">算纸页「写入用纸档」后的落库快照。mode / gusset_m / paper_m² 以写入值为准，改默认底褶不影响旧档。</p>
     <p v-if="err" class="bad">{{ err }}</p>
     <p v-else-if="!items.length" class="empty">还没有写入过。先去算纸试一单。</p>
     <ul v-else class="item-list">
       <li v-for="r in items" :key="r.id">
-        <span>{{ r.box_name }}</span>
-        <span class="meta">{{ r.result?.paper_m2 ?? '—' }} m²</span>
+        <router-link :to="`/runs/${r.id}`">
+          #{{ r.id }} {{ r.box_name }}
+          <span class="pill" :class="{ warn: r.result?.mode === 'bag' }">
+            {{ r.result?.mode === 'bag' ? '袋装' : '盒装' }}
+          </span>
+        </router-link>
+        <span class="meta">
+          gusset {{ r.result?.gusset_m ?? '—' }} m ｜
+          {{ r.result?.paper_m2 ?? '—' }} m²
+        </span>
       </li>
     </ul>
   </div>
